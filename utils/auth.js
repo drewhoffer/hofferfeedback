@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, createContext } from 'react';
 import firebase from './firebase';
 import Router from 'next/router';
+import { createUser } from './db';
 
 const authContext = createContext();
 
@@ -16,9 +17,12 @@ export const useAuth = () => {
 function useProvideAuth() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+
     const handleUser = (rawUser) => {
         if (rawUser) {
             const user = formatUser(rawUser);
+
+            createUser(user.uid, user);
             setLoading(false);
             setUser(user);
             return user;
@@ -28,19 +32,20 @@ function useProvideAuth() {
             return false;
         }
     };
+
     const signinWithGoogle = (redirect) => {
-        setLoading(true)
+        setLoading(true);
         return firebase
-          .auth()
-          .signInWithPopup(new firebase.auth.GoogleAuthProvider())
-          .then((response) => {
-            handleUser(response.user)
-            if (redirect) {
-              Router.push(redirect)
-            }
-          })
-      }
-      
+            .auth()
+            .signInWithPopup(new firebase.auth.GoogleAuthProvider())
+            .then((response) => {
+                handleUser(response.user);
+                if (redirect) {
+                    Router.push(redirect);
+                }
+            });
+    };
+
     const signinWithGitHub = () => {
         setLoading(true);
         return firebase
@@ -48,16 +53,19 @@ function useProvideAuth() {
             .signInWithPopup(new firebase.auth.GithubAuthProvider())
             .then((response) => handleUser(response.user));
     };
+
     const signout = () => {
         return firebase
             .auth()
             .signOut()
             .then(() => handleUser(false));
     };
+
     useEffect(() => {
         const unsubscribe = firebase.auth().onAuthStateChanged(handleUser);
         return () => unsubscribe();
     }, []);
+
     return {
         user,
         loading,
