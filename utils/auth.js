@@ -18,13 +18,13 @@ function useProvideAuth() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const handleUser = (rawUser) => {
+    const handleUser = async (rawUser) => {
         if (rawUser) {
-            const user = formatUser(rawUser);
-
-            createUser(user.uid, user);
-            setLoading(false);
+            const user = await formatUser(rawUser);
+            const { token, ...userWithoutToken } = user;
+            createUser(user.uid, userWithoutToken);
             setUser(user);
+            setLoading(false);
             return user;
         } else {
             setLoading(false);
@@ -74,11 +74,13 @@ function useProvideAuth() {
         signout,
     };
 }
-const formatUser = (user) => {
+
+const formatUser = async (user) => {
     return {
         uid: user.uid,
         email: user.email,
         name: user.displayName,
+        token: user.ya,
         provider: user.providerData[0].providerId,
         photoUrl: user.photoURL,
     };

@@ -9,7 +9,6 @@ export default function Index() {
     ) : (
         <button onClick={(e) => {
             auth.signinWithGitHub()
-            console.log(auth)
         }}>Sign In</button>
     );
 }
