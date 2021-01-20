@@ -45,6 +45,16 @@ function useProvideAuth() {
                 }
             });
     };
+    const signinWithEmail = (email, password) => {
+        setLoading(true);
+        return firebase
+            .auth()
+            .signInWithEmailAndPassword(email, password)
+            .then((response) => {
+                handleUser(response.user);
+                Router.push('/sites');
+            });
+    };
 
     const signinWithGitHub = () => {
         setLoading(true);
@@ -71,9 +81,17 @@ function useProvideAuth() {
         loading,
         signinWithGitHub,
         signinWithGoogle,
+        signinWithEmail,
         signout,
+        getStripeRole,
     };
 }
+
+const getStripeRole = async () => {
+    await firebase.auth().currentUser.getIdToken(true);
+    const decodedToken = await firebase.auth().currentUser.getIdTokenResult();
+    return decodedToken.claims.stripeRole || 'free';
+};
 
 const formatUser = async (user) => {
     return {
@@ -83,5 +101,6 @@ const formatUser = async (user) => {
         token: user.ya,
         provider: user.providerData[0].providerId,
         photoUrl: user.photoURL,
+        stripeRole: await getStripeRole(),
     };
 };

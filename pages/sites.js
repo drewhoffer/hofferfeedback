@@ -1,17 +1,17 @@
-import React from 'react';
 import useSWR from 'swr';
-import DashboardShell from '@/components/DashboardShell';
-import EmptyState from '@/components/EmptyState';
-import SiteTableHeader from '@/components/SiteTableHeader';
-import SiteTable from '@/components/SiteTable';
-import SiteTableSkeleton from '@/components/SiteTableSkeleton';
-import fetcher from '@/utils/fetcher';
 import { useAuth } from '@/utils/auth';
+import fetcher from '@/utils/fetcher';
+import Page from '@/components/Page';
+import DashboardShell from '@/components/DashboardShell';
+import SiteTable from '@/components/SiteTable';
+import SiteEmptyState from '@/components/SiteEmptyState';
+import SiteTableHeader from '@/components/SiteTableHeader';
+import SiteTableSkeleton from '@/components/SiteTableSkeleton';
+import UpgradeEmptyState from '@/components/UpgradeEmptyState';
 const Dashboard = () => {
     const { user } = useAuth();
     const { data } = useSWR(user ? ['/api/sites', user.token] : null, fetcher);
-    const sites = data?.sites;
-
+    const isPaidAccount = user?.stripeRole !== 'free';
     if (!data) {
         return (
             <DashboardShell>
@@ -23,17 +23,21 @@ const Dashboard = () => {
     if (data.sites.length) {
         return (
             <DashboardShell>
-                <SiteTableHeader />
-                <SiteTable sites={sites} />
+                <SiteTableHeader isPaidAccount={isPaidAccount} />
+                <SiteTable sites={data.sites} />
             </DashboardShell>
         );
-    } else {
-        return (
-            <DashboardShell>
-                <SiteTableHeader />
-                <EmptyState />
-            </DashboardShell>
-        )
     }
+    return (
+        <DashboardShell>
+            <SiteTableHeader isPaidAccount={isPaidAccount} />
+            {isPaidAccount ? <SiteEmptyState /> : <UpgradeEmptyState />}
+        </DashboardShell>
+    );
 };
-export default Dashboard;
+const DashboardPage = () => (
+    <Page name="Dashboard" path="/sites">
+        <Dashboard />
+    </Page>
+);
+export default DashboardPage;

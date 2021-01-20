@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Heading, Stack, Text, Button } from '@chakra-ui/core';
+import AddSiteModal from './AddSiteModal';
 const EmptyState = () => {
     return (
         <Box
@@ -26,7 +27,7 @@ const EmptyState = () => {
             >
                 <Heading size="lg">You haven’t added any sites.</Heading>
                 <Text>Welcome 👋🏼 Let’s get started.</Text>
-                <Button
+                <AddSiteModal
                     maxWidth="200px"
                     backgroundColor="gray.900"
                     color="white"
@@ -39,7 +40,22 @@ const EmptyState = () => {
                     }}
                 >
                     Add Your First Site
-                </Button>
+                </AddSiteModal>
+
+                {/* <Button
+                    maxWidth="200px"
+                    backgroundColor="gray.900"
+                    color="white"
+                    fontWeight="medium"
+                    mt={4}
+                    _hover={{ bg: 'gray.700' }}
+                    _active={{
+                        bg: 'gray.800',
+                        transform: 'scale(0.95)',
+                    }}
+                >
+                    Add Your First Site
+                </Button> */}
             </Stack>
         </Box>
     );

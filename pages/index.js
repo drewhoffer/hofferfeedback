@@ -8,7 +8,7 @@ export default function Index() {
         </div>
     ) : (
         <button onClick={(e) => {
-            auth.signinWithGitHub()
+            auth.signinWithGoogle()
         }}>Sign In</button>
     );
 }

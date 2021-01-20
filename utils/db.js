@@ -1,6 +1,6 @@
 import firebase from './firebase';
 require('firebase/firestore');
-
+require('firebase/functions');
 const firestore = firebase.firestore();
 
 export function updateUser(uid, data) {
